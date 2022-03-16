@@ -63,23 +63,31 @@ public class Main {
             }
         }
         for (int i = 0; i < 9; i++) {
-            if (str.charAt(i) != '_')
+            if (str.charAt(i) != '_') {
                 continue;
-            else if (i == 8){
+            }
+            else if (i == 8) {
                 System.out.println("Draw");
                 return true;
             }
-            else
+            else {
                 return false;
+            }
         }
         return false;
     }
 
     static int numOffset(int x, int y) {
         int offset = 0;
-        if (y == 1)         offset = x;
-        else if (y == 2)    offset = y * 2 + x - 1;
-        else if (y == 3)    offset = y * 2 + x;
+        if (y == 1) {
+            offset = x;
+        }
+        else if (y == 2) {
+            offset = y * 2 + x - 1;
+        }
+        else if (y == 3) {
+            offset = y * 2 + x;
+        }
         return offset;
     }
 
@@ -125,8 +133,9 @@ public class Main {
                         win = check(game);
                     }
                 }
-                else
+                else {
                     System.out.println("Coordinates should be from 1 to 3!");
+                }
             } catch (InputMismatchException e) {
                 System.out.println("You should enter numbers!");
                 scan.nextLine();
