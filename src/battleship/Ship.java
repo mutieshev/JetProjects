@@ -10,7 +10,7 @@ public enum Ship {
     private final String name;
     private final int size;
 
-    private Ship(String name, int size) {
+    Ship(String name, int size) {
         this.name = name;
         this.size = size;
     }
