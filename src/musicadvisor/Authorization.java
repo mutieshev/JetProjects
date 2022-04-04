@@ -195,7 +195,6 @@ public class Authorization {
                 .uri(URI.create(spotifyApi + "/v1/browse/categories/" + categoryID + "/playlists"))
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println(response.body());
         JsonObject allPlaylists =
                 JsonParser.parseString(response.body()).getAsJsonObject().getAsJsonObject("playlists");
         JsonArray items = allPlaylists.getAsJsonArray("items");
