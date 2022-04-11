@@ -15,12 +15,12 @@ import java.net.http.HttpResponse;
 
 public class Authorization {
     public static String SERVER_PATH = "https://accounts.spotify.com";
-    public static String REDIRECT_URI = "http://localhost:8080";
-    public static String CLIENT_ID = "bc28fe5be37d4ea49470556b006d4e55";
-    public static String CLIENT_SECRET = "430e02cd09ef4323be0d49a0eddc4721";
-    public static String ACCESS_TOKEN = "BQBfp1KxkrPxIlkwidhU2rhhK1J9YKNqNn9nPTl1G2quWdZI8CGgL0AHHZ38qSwsvBk2cGppSnHHWRSS82YqKtNbPZF3ixc9a_NOjU1GePKC37zlNWyAZ9vLH0btI96R4HZPM0oX_QufMu8MKMFkn8VHJL8cOKpSGg\n";
-    public static String API_SERVER_PATH = "https://api.spotify.com";
-    public static String ACCESS_CODE = "";
+    private static final String REDIRECT_URI = "http://localhost:8080/";
+    private static final String CLIENT_ID = "e200443d9f17416589e98951db551839";
+    private static final String CLIENT_SECRET = "e8f2d6158aad4dadb61b7d3676e909dd";
+    protected static final String API_SERVER_PATH = "https://api.spotify.com";
+    public static String accessCode = "";
+    public static String accessToken = "";
 
     public void getAccessCode() throws IOException, InterruptedException {
         String uri = SERVER_PATH + "/authorize"
@@ -31,16 +31,14 @@ public class Authorization {
         System.out.println(uri);
         HttpServer server = HttpServer.create();
         server.bind(new InetSocketAddress(8080), 0);
-        server.start();
         server.createContext("/",
                 new HttpHandler() {
                     public void handle(HttpExchange exchange) throws IOException {
                         String query = exchange.getRequestURI().getQuery();
                         String request;
                         if (query != null && query.contains("code")) {
-                            ACCESS_CODE = query.substring(5);
+                            accessCode = query.substring(5);
                             System.out.println("code received");
-                            System.out.println(ACCESS_CODE);
                             request = "Got the code. Return back to your program.";
                         } else {
                             request = "Authorization code not found. Try again.";
@@ -50,22 +48,22 @@ public class Authorization {
                         exchange.getResponseBody().close();
                     }
                 });
+        server.start();
         System.out.println("waiting for code...");
-        while (ACCESS_CODE.length() == 0) {
+        while (accessCode.length() == 0) {
             Thread.sleep(100);
         }
         server.stop(5);
     }
 
     public void getAccessToken() throws IOException, InterruptedException {
-        System.out.println("making http request for access_token...");
-        System.out.println("response:");
+        System.out.println("making http request for access token...");
         HttpRequest request = HttpRequest.newBuilder()
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .uri(URI.create(SERVER_PATH + "/api/token"))
                 .POST(HttpRequest.BodyPublishers.ofString(
                         "grant_type=authorization_code"
-                                + "&code=" + ACCESS_CODE
+                                + "&code=" + accessCode
                                 + "&client_id=" + CLIENT_ID
                                 + "&client_secret=" + CLIENT_SECRET
                                 + "&redirect_uri=" + REDIRECT_URI))
@@ -73,11 +71,9 @@ public class Authorization {
 
         HttpClient client = HttpClient.newBuilder().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        assert response != null;
-        System.out.println(response.body());
-        Main.isAuthorized = true;
+        advisor.Main.isAuthorized = true;
         JsonObject jo = JsonParser.parseString(response.body()).getAsJsonObject();
-        ACCESS_TOKEN = jo.get("access_token").getAsString();
+        accessToken = jo.get("access_token").getAsString();
         System.out.println("Success!");
     }
 }

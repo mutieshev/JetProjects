@@ -14,12 +14,12 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Categories implements Viewers {
-    static HashMap<Object, Object> categoryId;
-    static List<String> categoriesList;
-    static int pages;
-    static int currentStartPage;
-    static int prevStartPage;
-    static int nextStartPage;
+    public static HashMap<Object, Object> categoryId;
+    private static List<String> categoriesList;
+    private static int pages;
+    private static int currentStartPage;
+    private static int prevStartPage;
+    private static int nextStartPage;
 
     public Categories() {
         categoryId = new HashMap<>();
@@ -68,7 +68,7 @@ public class Categories implements Viewers {
     static void getAllCategories() throws IOException, InterruptedException {
         String path = Authorization.API_SERVER_PATH + "/v1/browse/categories";
         HttpRequest request = HttpRequest.newBuilder()
-                .header("Authorization", "Bearer " + Authorization.ACCESS_TOKEN)
+                .header("Authorization", "Bearer " + Authorization.accessToken)
                 .uri(URI.create(path))
                 .GET()
                 .build();

@@ -15,14 +15,14 @@ import java.util.List;
 import java.util.Map;
 
 public class ParticularPlaylist implements Viewers {
-    static Map<String, String> categoryId;
-    static String str;
-    static List<String> songName;
-    static List<String> songLink;
-    static int pages;
-    static int currentStartPage;
-    static int prevStartPage;
-    static int nextStartPage;
+    private static Map<String, String> categoryId;
+    private static String str;
+    private static List<String> songName;
+    private static List<String> songLink;
+    private static int pages;
+    private static int currentStartPage;
+    private static int prevStartPage;
+    private static int nextStartPage;
 
     public ParticularPlaylist(String type) {
         str = type;
@@ -76,7 +76,7 @@ public class ParticularPlaylist implements Viewers {
         if (categoryId.containsKey(str)) {
             String path = Authorization.API_SERVER_PATH + "/v1/browse/categories/" + categoryId.get(str) + "/playlists";
             HttpRequest request = HttpRequest.newBuilder()
-                    .header("Authorization", "Bearer " + Authorization.ACCESS_TOKEN)
+                    .header("Authorization", "Bearer " + Authorization.accessToken)
                     .uri(URI.create(path))
                     .GET()
                     .build();
@@ -104,7 +104,7 @@ public class ParticularPlaylist implements Viewers {
     private void getCategories() throws IOException, InterruptedException {
         String path = Authorization.API_SERVER_PATH + "/v1/browse/categories";
         HttpRequest request = HttpRequest.newBuilder()
-                .header("Authorization", "Bearer " + Authorization.ACCESS_TOKEN)
+                .header("Authorization", "Bearer " + Authorization.accessToken)
                 .uri(URI.create(path))
                 .GET()
                 .build();

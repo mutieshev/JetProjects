@@ -14,13 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NewSongs implements Viewers {
-    static List<String> songName;
-    static List<String> songLink;
-    static List<ArrayList<String>> artistsName;
-    static int pages;
-    static int currentStartPage;
-    static int prevStartPage;
-    static int nextStartPage;
+    private static List<String> songName;
+    private static List<String> songLink;
+    private static List<ArrayList<String>> artistsName;
+    private static int pages;
+    private static int currentStartPage;
+    private static int prevStartPage;
+    private static int nextStartPage;
 
     public NewSongs() {
         songName = new ArrayList<>();
@@ -72,7 +72,7 @@ public class NewSongs implements Viewers {
     static void getNewReleases() throws IOException, InterruptedException {
         String path = Authorization.API_SERVER_PATH + "/v1/browse/new-releases";
         HttpRequest request = HttpRequest.newBuilder()
-                .header("Authorization", "Bearer " + Authorization.ACCESS_TOKEN)
+                .header("Authorization", "Bearer " + Authorization.accessToken)
                 .uri(URI.create(path))
                 .GET()
                 .build();
