@@ -1,15 +1,16 @@
 package blockchain;
 
-import java.time.Duration;
+import blockchain.difficulty.DifficultyModifier;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Blockchain {
+    public static int difficulty = 0;
     private final List<Block> blocks = new ArrayList<>();
     private final List<Miner> miners = new ArrayList<>();
     private final List<String> data = new ArrayList<>();
-    private int difficulty = 0;
-    private final int blockCount = 15;
+    private final int blockCount = 5;
     private boolean running = true;
 
     public void start() {
@@ -31,7 +32,7 @@ public class Blockchain {
         }
     }
 
-    public synchronized void addBlock(Block block) {
+    public synchronized void addBlock(Block block) throws InstantiationException, IllegalAccessException {
         if (!running) {
             return;
         }
@@ -39,7 +40,7 @@ public class Blockchain {
             return;
         }
 
-        DifficultyModifier modifier = DifficultyModifier.of(block, getLastBlock(), difficulty);
+        String modifier = DifficultyModifier.changeDifficulty(block, getLastBlock(), difficulty);
 
         blocks.add(block);
         if (blocks.size() == blockCount) {
@@ -47,7 +48,7 @@ public class Blockchain {
             miners.forEach(m -> m.running = false);
         }
 
-        difficulty = modifier.apply(difficulty);
+        difficulty = DifficultyModifier.getDifficultyByCode(modifier).getCommandTemplate().changeDifficulty();
         System.out.println(toStringBlock(block, modifier) + "\n");
         miners.forEach(n -> {
             n.getDifficulty(difficulty);
@@ -55,7 +56,7 @@ public class Blockchain {
         });
     }
 
-    private String toStringBlock(Block block, DifficultyModifier modifier) {
+    private String toStringBlock(Block block, String modifier) throws InstantiationException, IllegalAccessException {
         return "Block:" +
                 "\nCreated by: miner" + block.minerId +
                 "\nminer" + block.minerId + " gets 100 VC" +
@@ -78,15 +79,8 @@ public class Blockchain {
         return "\nBlock data:\n" + String.join("\n", block.data);
     }
 
-    private String toStringDifficulty(DifficultyModifier modifier) {
-        switch (modifier) {
-            case INCREASE:
-                return "N was increased to " + difficulty;
-            case DECREASE:
-                return "N was decreased to " + difficulty;
-            default:
-                return "N stays the same";
-        }
+    private String toStringDifficulty(String modifier) throws InstantiationException, IllegalAccessException {
+        return DifficultyModifier.getDifficultyByCode(modifier).getCommandTemplate().getDifficulty();
     }
 
     private Block getLastBlock() {

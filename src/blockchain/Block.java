@@ -8,21 +8,21 @@ import java.util.Random;
 
 public class Block {
     private static final Random rand = new Random();
-    public final int minerId;
-    public final int id;
+    final int minerId;
+    final int id;
     public final long timestamp;
-    public final int magicNumber;
-    public final String prevHash;
-    public final String hash;
+    final int magicNumber;
+    final String prevHash;
+    final String hash;
     public Duration duration;
-    public List<String> data = Collections.emptyList();
+    List<String> data = Collections.emptyList();
 
     public Block(int id, String prevHash, int minerId) {
         this.id = id;
         this.timestamp = System.currentTimeMillis();
         this.magicNumber = rand.nextInt();
         this.prevHash = prevHash;
-        this.hash = sha256(id + timestamp + magicNumber + prevHash + minerId);
+        this.hash = generateSHA256(id + timestamp + magicNumber + prevHash + minerId);
         this.minerId = minerId;
     }
 
@@ -38,7 +38,7 @@ public class Block {
         return true;
     }
 
-    private static String sha256(Object input) {
+    private static String generateSHA256(Object input) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(input.toString().getBytes("UTF-8"));

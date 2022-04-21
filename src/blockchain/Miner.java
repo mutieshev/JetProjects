@@ -22,7 +22,12 @@ public class Miner extends Thread {
     public void run() {
         while (running) {
             Block block = newBlock();
-            chain.addBlock(block);
+            try {
+                chain.addBlock(block);
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+                System.exit(0);
+            }
         }
     }
 
